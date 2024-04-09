@@ -16,21 +16,21 @@ function Landing() {
           ref={imageRef}
           src="bg_chesspanel.png"
           alt="chesspanel"
-          className="rounded-lg py-3 ml-10"
+          className="rounded-lg p-9 ml-10"
           style={{ height: imageHeight, objectFit: "cover" }}
         />
       </div>
-      <div className="flex flex-col justify-center p-10">
-        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1">
+      <div className="flex flex-col justify-center p-10 mr-5">
+        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white shadow-md">
           Play Online
         </button>
-        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1">
+        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white shadow-md">
           Challenge AI
         </button>
-        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1">
+        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white  shadow-md">
           Tournaments
         </button>
-        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1">
+        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white shadow-md">
           Chess Ranking
         </button>
       </div>

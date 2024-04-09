@@ -20,12 +20,12 @@ const Navbar = () => {
   const guestLinks = (
     <ul className="flex items-center">
       <li>
-        <Link to="/register" className="text-white hover:text-gray-300 mr-4">
+        <Link to="/register" className="text-black hover:text-gray-300 mr-4">
           Register
         </Link>
       </li>
       <li>
-        <Link to="/login" className="text-white hover:text-gray-300">
+        <Link to="/login" className="text-black hover:text-gray-300">
           Login
         </Link>
       </li>
@@ -33,10 +33,13 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="bg-gray-800 p-4" style={{ height: "13vh" }}>
+    <nav
+      className="p-4 bg-white text-black shadow-md"
+      style={{ height: "13vh" }}
+    >
       <div className="container mx-auto px-20 flex justify-between items-center">
-        <h1 className="text-white">
-          <Link to="/" className="text-white text-3xl font-bold">
+        <h1 className="text-black">
+          <Link to="/" className="text-black text-4xl font-bold">
             <i className="fas fa-code" /> Chess
           </Link>
         </h1>

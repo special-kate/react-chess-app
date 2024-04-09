@@ -1,0 +1,13 @@
+﻿{
+  "connectionString": "mongodb://127.0.0.1:27017/chess",
+  "secret": "secretKeyForReactChessApp",
+  "emailFrom": "info@node-mongo-signup-verification-api.com",
+  "smtpOptions": {
+    "host": "smtp.office365.com",
+    "port": 587,
+    "auth": {
+      "user": "RosemaryR784@outlook.com",
+      "pass": "Rosemary*R784"
+    }
+  }
+}

@@ -1,29 +1,29 @@
+﻿require('rootpath')();
 const express = require('express');
-const connectDB = require('./config/db');
-const path = require('path');
-
 const app = express();
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const errorHandler = require('_middleware/error-handler');
 
-// Connect Database
-connectDB();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
-// Init Middleware
-app.use(express.json());
+// allow cors requests from any origin and with credentials
+app.use(cors({ origin: (origin, callback) => callback(null, true), credentials: true }));
 
-// Define Routes
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/auth', require('./routes/api/auth'));
+// api routes
+app.use('/accounts', require('./accounts/accounts.controller'));
 
-// Serve static assets in production
-if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  app.use(express.static('client/build'));
+// swagger docs route
+app.use('/api-docs', require('_helpers/swagger'));
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-  });
-}
+// global error handler
+app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+// start server
+const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4000;
+app.listen(port, () => {
+    console.log('Server listening on port ' + port);
+});
