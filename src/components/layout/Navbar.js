@@ -20,13 +20,16 @@ const Navbar = () => {
   const guestLinks = (
     <ul className="flex items-center">
       <li>
-        <Link to="/register" className="text-black hover:text-gray-300 mr-4">
+        <Link
+          to="/register"
+          className="text-black hover:text-gray-300 mr-4 px-2"
+        >
           Register
         </Link>
       </li>
       <li>
-        <Link to="/login" className="text-black hover:text-gray-300">
-          Login
+        <Link to="/login" className="text-black hover:text-gray-300 px-2">
+          Sign In
         </Link>
       </li>
     </ul>

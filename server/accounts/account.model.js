@@ -1,37 +1,41 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const { DataTypes } = require('sequelize');
 
-const schema = new Schema({
-    email: { type: String, unique: true, required: true },
-    passwordHash: { type: String, required: true },
-    title: { type: String, required: true },
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    acceptTerms: Boolean,
-    role: { type: String, required: true },
-    verificationToken: String,
-    verified: Date,
-    resetToken: {
-        token: String,
-        expires: Date
-    },
-    passwordReset: Date,
-    created: { type: Date, default: Date.now },
-    updated: Date
-});
+module.exports = model;
 
-schema.virtual('isVerified').get(function () {
-    return !!(this.verified || this.passwordReset);
-});
+function model(sequelize) {
+    const attributes = {
+        email: { type: DataTypes.STRING, allowNull: false },
+        passwordHash: { type: DataTypes.STRING, allowNull: false },
+        title: { type: DataTypes.STRING, allowNull: false },
+        firstName: { type: DataTypes.STRING, allowNull: false },
+        lastName: { type: DataTypes.STRING, allowNull: false },
+        acceptTerms: { type: DataTypes.BOOLEAN },
+        role: { type: DataTypes.STRING, allowNull: false },
+        verificationToken: { type: DataTypes.STRING },
+        verified: { type: DataTypes.DATE },
+        resetToken: { type: DataTypes.STRING },
+        resetTokenExpires: { type: DataTypes.DATE },
+        passwordReset: { type: DataTypes.DATE },
+        created: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+        updated: { type: DataTypes.DATE },
+        isVerified: {
+            type: DataTypes.VIRTUAL,
+            get() { return !!(this.verified || this.passwordReset); }
+        }
+    };
 
-schema.set('toJSON', {
-    virtuals: true,
-    versionKey: false,
-    transform: function (doc, ret) {
-        // remove these props when object is serialized
-        delete ret._id;
-        delete ret.passwordHash;
-    }
-});
+    const options = {
+        // disable default timestamp fields (createdAt and updatedAt)
+        timestamps: false, 
+        defaultScope: {
+            // exclude password hash by default
+            attributes: { exclude: ['passwordHash'] }
+        },
+        scopes: {
+            // include hash with this scope
+            withHash: { attributes: {}, }
+        }        
+    };
 
-module.exports = mongoose.model('Account', schema);
+    return sequelize.define('account', attributes, options);
+}

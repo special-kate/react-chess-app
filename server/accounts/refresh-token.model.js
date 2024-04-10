@@ -1,23 +1,30 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const { DataTypes } = require('sequelize');
 
-const schema = new Schema({
-    account: { type: Schema.Types.ObjectId, ref: 'Account' },
-    token: String,
-    expires: Date,
-    created: { type: Date, default: Date.now },
-    createdByIp: String,
-    revoked: Date,
-    revokedByIp: String,
-    replacedByToken: String
-});
+module.exports = model;
 
-schema.virtual('isExpired').get(function () {
-    return Date.now() >= this.expires;
-});
+function model(sequelize) {
+    const attributes = {
+        token: { type: DataTypes.STRING },
+        expires: { type: DataTypes.DATE },
+        created: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+        createdByIp: { type: DataTypes.STRING },
+        revoked: { type: DataTypes.DATE },
+        revokedByIp: { type: DataTypes.STRING },
+        replacedByToken: { type: DataTypes.STRING },
+        isExpired: {
+            type: DataTypes.VIRTUAL,
+            get() { return Date.now() >= this.expires; }
+        },
+        isActive: {
+            type: DataTypes.VIRTUAL,
+            get() { return !this.revoked && !this.isExpired; }
+        }
+    };
 
-schema.virtual('isActive').get(function () {
-    return !this.revoked && !this.isExpired;
-});
+    const options = {
+        // disable default timestamp fields (createdAt and updatedAt)
+        timestamps: false
+    };
 
-module.exports = mongoose.model('RefreshToken', schema);
+    return sequelize.define('refreshToken', attributes, options);
+}

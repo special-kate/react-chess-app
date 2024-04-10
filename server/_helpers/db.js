@@ -1,26 +1,28 @@
-const config = require("config.json");
-const mongoose = require("mongoose");
-const connectionOptions = {
-  useCreateIndex: true,
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-};
-mongoose
-  .connect(
-    process.env.MONGODB_URI || config.connectionString,
-    connectionOptions
-  )
-  .then(() => console.log("MongoDB connected successfully."))
-  .catch((err) => console.log("MongoDB Error", err));
-mongoose.Promise = global.Promise;
+const config = require('config.json');
+const mysql = require('mysql2/promise');
+const { Sequelize } = require('sequelize');
 
-module.exports = {
-  Account: require("accounts/account.model"),
-  RefreshToken: require("accounts/refresh-token.model"),
-  isValidId,
-};
+module.exports = db = {};
 
-function isValidId(id) {
-  return mongoose.Types.ObjectId.isValid(id);
+initialize();
+
+async function initialize() {
+    // create db if it doesn't already exist
+    const { host, port, user, password, database } = config.database;
+    const connection = await mysql.createConnection({ host, port, user, password });
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
+
+    // connect to db
+    const sequelize = new Sequelize(database, user, password, { dialect: 'mysql' });
+
+    // init models and add them to the exported db object
+    db.Account = require('../accounts/account.model')(sequelize);
+    db.RefreshToken = require('../accounts/refresh-token.model')(sequelize);
+
+    // define relationships
+    db.Account.hasMany(db.RefreshToken, { onDelete: 'CASCADE' });
+    db.RefreshToken.belongsTo(db.Account);
+    
+    // sync all models with database
+    await sequelize.sync();
 }
