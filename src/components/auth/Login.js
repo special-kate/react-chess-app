@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { accountService, alertService } from "../../_services";
 
 function Login({ history }) {
+  console.log("hi", history);
   const [imageHeight, setImageHeight] = useState(0);
   const imageRef = useRef(null);
 
@@ -23,15 +24,16 @@ function Login({ history }) {
     accountService
       .login(email, password)
       .then(() => {
-        const { from } = window.location.state || { from: { pathname: "/" } };
-        history.push(from);
+        // const { from } = window.location.state || { from: { pathname: "/" } };
+        // history.push("/");
+        window.location.href = "/";
       })
       .catch((error) => {
         setSubmitting(false);
         alertService.error(error);
       })
       .finally(() => {
-        setSubmitting(false); // This will be executed regardless of success or failure
+        setSubmitting(false);
       });
   }
 
@@ -57,7 +59,7 @@ function Login({ history }) {
         onSubmit={onSubmit}
       >
         {({ errors, touched, isSubmitting, handleSubmit }) => (
-          <Form onSubmit={handleSubmit}>
+          <Form>
             <div className="flex flex-1 flex-col justify-center lg:px-8 px-10 py-10 mt-5">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <h2 className="text-center text-3xl font-bold leading-9 tracking-tight text-gray-900">
@@ -66,7 +68,7 @@ function Login({ history }) {
               </div>
 
               <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form className="space-y-6" action="#" method="POST">
+                <div className="space-y-6">
                   <div>
                     <label
                       htmlFor="email"
@@ -79,7 +81,7 @@ function Login({ history }) {
                         name="email"
                         type="text"
                         className={
-                          "block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" +
+                          "block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" +
                           (errors.email && touched.email ? " is-invalid" : "")
                         }
                       />
@@ -113,7 +115,7 @@ function Login({ history }) {
                         name="password"
                         type="password"
                         className={
-                          "block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" +
+                          "block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" +
                           (errors.password && touched.password
                             ? " is-invalid"
                             : "")
@@ -135,7 +137,7 @@ function Login({ history }) {
                     >
                       {" "}
                       {isSubmitting && (
-                        <span className="spinner-border spinner-border-sm mr-1"></span>
+                        <span className="inline-block animate-spin rounded-full border-t-2 border-white-900 mr-3 w-4 h-4"></span>
                       )}
                       Sign in
                     </button>
@@ -146,7 +148,7 @@ function Login({ history }) {
                       Register
                     </Link>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </Form>

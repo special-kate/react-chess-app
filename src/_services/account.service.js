@@ -4,7 +4,7 @@ import { config } from "../config";
 import { fetchWrapper, history } from "../_helpers";
 
 const userSubject = new BehaviorSubject(null);
-const baseUrl = `${config.apiUrl}/accounts`;
+const baseUrl = `${config.apiUrl}`;
 
 export const accountService = {
   login,
@@ -28,7 +28,7 @@ export const accountService = {
 
 function login(email, password) {
   return fetchWrapper
-    .post(`${baseUrl}/authenticate`, { email, password })
+    .post(`${baseUrl}/accounts/authenticate`, { email, password })
     .then((user) => {
       // publish user to subscribers and start timer to refresh token
       userSubject.next(user);
@@ -39,39 +39,43 @@ function login(email, password) {
 
 function logout() {
   // revoke token, stop refresh timer, publish null to user subscribers and redirect to login page
-  fetchWrapper.post(`${baseUrl}/revoke-token`, {});
+  fetchWrapper.post(`${baseUrl}/accounts/revoke-token`, {});
   stopRefreshTokenTimer();
   userSubject.next(null);
-  history.push("/account/login");
+  history.push("/login");
 }
 
 function refreshToken() {
-  return fetchWrapper.post(`${baseUrl}/refresh-token`, {}).then((user) => {
-    // publish user to subscribers and start timer to refresh token
-    userSubject.next(user);
-    startRefreshTokenTimer();
-    return user;
-  });
+  return fetchWrapper
+    .post(`${baseUrl}/accounts/refresh-token`, {})
+    .then((user) => {
+      // publish user to subscribers and start timer to refresh token
+      userSubject.next(user);
+      startRefreshTokenTimer();
+      return user;
+    });
 }
 
 function register(params) {
-  return fetchWrapper.post(`${baseUrl}/register`, params);
+  return fetchWrapper.post(`${baseUrl}/accounts/register`, params);
 }
 
 function verifyEmail(token) {
-  return fetchWrapper.post(`${baseUrl}/verify-email`, { token });
+  return fetchWrapper.post(`${baseUrl}/accounts/verify-email`, { token });
 }
 
 function forgotPassword(email) {
-  return fetchWrapper.post(`${baseUrl}/forgot-password`, { email });
+  return fetchWrapper.post(`${baseUrl}/accounts/forgot-password`, { email });
 }
 
 function validateResetToken(token) {
-  return fetchWrapper.post(`${baseUrl}/validate-reset-token`, { token });
+  return fetchWrapper.post(`${baseUrl}/accounts/validate-reset-token`, {
+    token,
+  });
 }
 
 function resetPassword({ token, password, confirmPassword }) {
-  return fetchWrapper.post(`${baseUrl}/reset-password`, {
+  return fetchWrapper.post(`${baseUrl}/accounts/reset-password`, {
     token,
     password,
     confirmPassword,
