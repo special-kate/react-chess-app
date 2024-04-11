@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import queryString from "query-string";
 
 import { accountService, alertService } from "../../_services";
@@ -11,14 +11,13 @@ function VerifyEmail({ history }) {
   };
 
   const [emailStatus, setEmailStatus] = useState(EmailStatus.Verifying);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const { token } = queryString.parse(window.location.search);
 
     // remove token from url to prevent http referer leakage
-    // history.replace(window.location.pathname);
-    // window.location.href = window.location.pathname;
 
+    navigate(window.location.pathname, { replace: true });
     accountService
       .verifyEmail(token)
       .then(() => {
@@ -26,9 +25,7 @@ function VerifyEmail({ history }) {
           keepAfterRouteChange: true,
         });
         // history.push("login");
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 2000);
+        navigate("/login");
       })
       .catch(() => {
         setEmailStatus(EmailStatus.Failed);

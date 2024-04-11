@@ -1,14 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { accountService } from "../../_services";
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const subscription = accountService.user.subscribe((x) => setUser(x));
+    console.log("nav", accountService.userValue);
+    return subscription.unsubscribe();
+  }, []);
+
   const authLinks = (
     <ul className="flex items-center">
       <li>
         <a
           href="#!"
-          className="text-white hover:text-gray-300"
-          onClick={() => {}}
+          className="text-black hover:text-gray-300"
+          onClick={() => {
+            accountService.logout();
+          }}
         >
           <i className="fas fa-sign-out-alt" />{" "}
           <span className="hidden sm:inline">Logout</span>
@@ -46,8 +57,7 @@ const Navbar = () => {
             <i className="fas fa-code" /> Chess
           </Link>
         </h1>
-        <div>{guestLinks}</div>
-        {/* <Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment> */}
+        <div>{user ? authLinks : guestLinks}</div>
       </div>
     </nav>
   );

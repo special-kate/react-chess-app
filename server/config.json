@@ -7,13 +7,13 @@
     "database": "chess"
   },
   "secret": "THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING",
-  "emailFrom": "RosemaryR784@outlook.com",
+  "emailFrom": "antonio.stiedemann@ethereal.email",
   "smtpOptions": {
-    "host": "smtp.office365.com",
+    "host": "smtp.ethereal.email",
     "port": 587,
     "auth": {
-      "user": "RosemaryR784@outlook.com",
-      "pass": "Rosemary*R784"
+      "user": "antonio.stiedemann@ethereal.email",
+      "pass": "GSBYAC823zaWXRtNyv"
     }
   }
 }

@@ -10,8 +10,13 @@ function Landing() {
   }, []);
 
   return (
-    <div className="landing grid grid-cols-2 px-20" style={{ height: "87vh" }}>
-      <div className="flex justify-center items-center">
+    <div
+      className="landing grid bg-cover grid-cols-12 px-20"
+      style={{
+        height: "87vh",
+      }}
+    >
+      <div className="col-span-6 justify-center items-center hidden md:flex">
         <img
           ref={imageRef}
           src="bg_chesspanel.png"
@@ -20,7 +25,7 @@ function Landing() {
           style={{ height: imageHeight, objectFit: "cover" }}
         />
       </div>
-      <div className="flex flex-col justify-center p-10 mr-5">
+      <div className="flex flex-col col-span-12 justify-center p-10 mr-5 md:col-span-6">
         <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white shadow-md">
           Play Online
         </button>

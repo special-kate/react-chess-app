@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { accountService, alertService } from "../../_services";
@@ -7,6 +7,7 @@ import { accountService, alertService } from "../../_services";
 function Register({ history }) {
   const [imageHeight, setImageHeight] = useState(0);
   const imageRef = useRef(null);
+  const navigate = useNavigate();
 
   const initialValues = {
     email: "",
@@ -29,7 +30,7 @@ function Register({ history }) {
     accountService
       .register(fields)
       .then(() => {
-        // window.location.href = "/login";
+        navigate("/login");
         alertService.success(
           "Registration successful, please check your email for verification instructions",
           { keepAfterRouteChange: true }

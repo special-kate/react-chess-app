@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { accountService, alertService } from "../../_services";
 
 function Login({ history }) {
-  console.log("hi", history);
   const [imageHeight, setImageHeight] = useState(0);
   const imageRef = useRef(null);
+  const navigate = useNavigate();
 
   const initialValues = {
     email: "",
@@ -24,8 +24,6 @@ function Login({ history }) {
     accountService
       .login(email, password)
       .then(() => {
-        // const { from } = window.location.state || { from: { pathname: "/" } };
-        // history.push("/");
         window.location.href = "/";
       })
       .catch((error) => {
@@ -58,7 +56,7 @@ function Login({ history }) {
         validationSchema={validationSchema}
         onSubmit={onSubmit}
       >
-        {({ errors, touched, isSubmitting, handleSubmit }) => (
+        {({ errors, touched, isSubmitting }) => (
           <Form>
             <div className="flex flex-1 flex-col justify-center lg:px-8 px-10 py-10 mt-5">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -103,7 +101,7 @@ function Login({ history }) {
                       </label>
                       <div className="text-sm">
                         <Link
-                          to="forgot-password"
+                          to="/account/forgot-password"
                           className="font-semibold text-indigo-600 hover:text-indigo-500"
                         >
                           Forgot Password?

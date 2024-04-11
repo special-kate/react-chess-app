@@ -1,7 +1,7 @@
 import { BehaviorSubject } from "rxjs";
 
 import { config } from "../config";
-import { fetchWrapper, history } from "../_helpers";
+import { fetchWrapper } from "../_helpers";
 
 const userSubject = new BehaviorSubject(null);
 const baseUrl = `${config.apiUrl}`;
@@ -39,21 +39,23 @@ function login(email, password) {
 
 function logout() {
   // revoke token, stop refresh timer, publish null to user subscribers and redirect to login page
-  fetchWrapper.post(`${baseUrl}/accounts/revoke-token`, {});
+  fetchWrapper.post(`${baseUrl}/accounts/revoke-token`, {}).then();
   stopRefreshTokenTimer();
   userSubject.next(null);
-  history.push("/login");
+  window.location.href = "/";
 }
 
 function refreshToken() {
   return fetchWrapper
     .post(`${baseUrl}/accounts/refresh-token`, {})
     .then((user) => {
+      console.log("hi - user", user);
       // publish user to subscribers and start timer to refresh token
       userSubject.next(user);
       startRefreshTokenTimer();
       return user;
-    });
+    })
+    .catch((err) => console.log("refreshtoken err", err));
 }
 
 function register(params) {
