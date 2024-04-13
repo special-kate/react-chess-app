@@ -18,6 +18,7 @@ import Navbar from "./components/layout/Navbar";
 import NotFound from "./components/layout/NotFound";
 import { Alert } from "./components/Alert";
 import Multiplayer from "./components/chess/multiplayer/Multiplayer";
+import Demo from "./components/chess/stockfishBot/Demo";
 import { accountService } from "./_services";
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
           <Route path="/account/forgot-password" element={<ForgotPassword />} />
           <Route path="/account/reset-password" element={<ResetPassword />} />
           <Route path="/multiplayer" element={<Multiplayer />} />
+          <Route path="/stockfish" element={<Demo />} />
         </Routes>
       </div>
     </Provider>

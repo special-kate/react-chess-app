@@ -21,6 +21,9 @@ function Game({ players, room, orientation, cleanup }) {
   const [fen, setFen] = useState(chess.fen()); // <- 2
   const [over, setOver] = useState("");
 
+  const customDarkSquareStyle = { backgroundColor: "red" };
+  const customLightSquareStyle = { backgroundColor: "blue" };
+
   const makeAMove = useCallback(
     (move) => {
       console.log("move", move);
@@ -125,6 +128,8 @@ function Game({ players, room, orientation, cleanup }) {
             position={fen}
             onPieceDrop={onDrop}
             boardOrientation={orientation}
+            customDarkSquareStyle={{ backgroundColor: "#B7C0D8" }}
+            customLightSquareStyle={{ backgroundColor: "#E8EDF9" }}
           />
         </div>
         <Box>
