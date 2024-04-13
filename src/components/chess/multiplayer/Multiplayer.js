@@ -1,10 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-import Container from "@mui/material/Container";
 import Game from "./Game";
 import InitGame from "./InitGame";
 import CustomDialog from "../../CustomDialog";
 import socket from "./socket";
-import { TextField } from "@mui/material";
 
 export default function Multiplayer() {
   const [username, setUsername] = useState("");
@@ -33,7 +31,7 @@ export default function Multiplayer() {
   }, []);
 
   return (
-    <Container>
+    <div className="container mx-auto">
       <CustomDialog
         open={!usernameSubmitted}
         handleClose={() => setUsernameSubmitted(true)}
@@ -45,18 +43,14 @@ export default function Multiplayer() {
           setUsernameSubmitted(true);
         }}
       >
-        <TextField
+        <input
           autoFocus
-          margin="dense"
+          className="w-full px-3 py-2 border rounded-md"
           id="username"
-          label="Username"
-          name="username"
-          value={username}
-          required
-          onChange={(e) => setUsername(e.target.value)}
           type="text"
-          fullWidth
-          variant="standard"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
         />
       </CustomDialog>
       {room ? (
@@ -75,6 +69,6 @@ export default function Multiplayer() {
           setPlayers={setPlayers}
         />
       )}
-    </Container>
+    </div>
   );
 }

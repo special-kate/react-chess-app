@@ -1,59 +1,48 @@
-import { Button, Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
 import CustomDialog from "../../CustomDialog";
 import socket from "./socket";
 
 export default function InitGame({ setRoom, setOrientation, setPlayers }) {
   const [roomDialogOpen, setRoomDialogOpen] = useState(false);
-  const [roomInput, setRoomInput] = useState(""); // input state
+  const [roomInput, setRoomInput] = useState("");
   const [roomError, setRoomError] = useState("");
 
   return (
-    <Stack
-      justifyContent="center"
-      alignItems="center"
-      sx={{ py: 1, height: "100vh" }}
-    >
+    <div className="flex flex-col items-center justify-center h-screen">
       <CustomDialog
         open={roomDialogOpen}
         handleClose={() => setRoomDialogOpen(false)}
         title="Select Room to Join"
         contentText="Enter a valid room ID to join the room"
         handleContinue={() => {
-          // join a room
-          if (!roomInput) return; // if given room input is valid, do nothing.
+          if (!roomInput) return;
           socket.emit("joinRoom", { roomId: roomInput }, (r) => {
-            // r is the response from the server
-            if (r.error) return setRoomError(r.message); // if an error is returned in the response set roomError to the error message and exit
+            if (r.error) return setRoomError(r.message);
             console.log("response:", r);
-            setRoom(r?.roomId); // set room to the room ID
-            setPlayers(r?.players); // set players array to the array of players in the room
-            setOrientation("black"); // set orientation as black
-            setRoomDialogOpen(false); // close dialog
+            setRoom(r?.roomId);
+            setPlayers(r?.players);
+            setOrientation("black");
+            setRoomDialogOpen(false);
           });
         }}
       >
-        <TextField
+        <input
           autoFocus
-          margin="dense"
+          className="w-full px-3 py-2 border rounded-md"
           id="room"
-          label="Room ID"
-          name="room"
+          placeholder="Room ID"
           value={roomInput}
           required
           onChange={(e) => setRoomInput(e.target.value)}
           type="text"
-          fullWidth
-          variant="standard"
-          error={Boolean(roomError)}
-          helperText={
-            !roomError ? "Enter a room ID" : `Invalid room ID: ${roomError}`
-          }
         />
+        {roomError && (
+          <p className="text-red-500 text-sm mt-1">
+            Invalid room ID: {roomError}
+          </p>
+        )}
       </CustomDialog>
-      {/* Button for starting a game */}
-      <Button
-        variant="contained"
+      <button
         onClick={() => {
           socket.emit("createRoom", (r) => {
             console.log(r);
@@ -61,17 +50,16 @@ export default function InitGame({ setRoom, setOrientation, setPlayers }) {
             setOrientation("white");
           });
         }}
+        className="m-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         Start a game
-      </Button>
-      {/* Button for joining a game */}
-      <Button
-        onClick={() => {
-          setRoomDialogOpen(true);
-        }}
+      </button>
+      <button
+        onClick={() => setRoomDialogOpen(true)}
+        className="m-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         Join a game
-      </Button>
-    </Stack>
+      </button>
+    </div>
   );
 }
