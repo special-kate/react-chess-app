@@ -36,10 +36,10 @@ function ForgotPassword({ history }) {
 
   return (
     <div
-      className="forgot-password grid grid-cols-2 px-20"
+      className="forgot-password grid grid-cols-1 md:grid-cols-2 px-20"
       style={{ height: "87vh" }}
     >
-      <div className="flex justify-center items-center">
+      <div className="hidden md:flex justify-center items-center">
         <img
           ref={imageRef}
           src={`${window.location.pathname.split("/")[0]}/bg_chesspanel.png`}

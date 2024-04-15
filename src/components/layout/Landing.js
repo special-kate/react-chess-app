@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 
 function Landing() {
   const [imageHeight, setImageHeight] = useState(0);
@@ -26,18 +27,24 @@ function Landing() {
         />
       </div>
       <div className="flex flex-col col-span-12 justify-center p-10 mr-5 md:col-span-6">
-        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white shadow-md">
+        <Link
+          to="/multiplayer"
+          className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white shadow-md"
+        >
           Play Online
-        </button>
-        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white shadow-md">
+        </Link>
+        <Link
+          to="/stockfish"
+          className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white shadow-md"
+        >
           Challenge AI
-        </button>
-        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white  shadow-md">
+        </Link>
+        <Link className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white  shadow-md">
           Tournaments
-        </button>
-        <button className="m-2 py-5 border border-gray-700 rounded-lg flex-1 bg-white shadow-md">
+        </Link>
+        <Link className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white shadow-md">
           Chess Ranking
-        </button>
+        </Link>
       </div>
     </div>
   );

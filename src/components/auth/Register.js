@@ -49,8 +49,11 @@ function Register({ history }) {
   }, []);
 
   return (
-    <div className="register grid grid-cols-2 px-20" style={{ height: "87vh" }}>
-      <div className="flex justify-center items-center">
+    <div
+      className="register grid grid-cols-1 md:grid-cols-2 px-20"
+      style={{ height: "87vh" }}
+    >
+      <div className="hidden md:flex justify-center items-center">
         <img
           ref={imageRef}
           src="bg_chesspanel.png"
@@ -65,8 +68,8 @@ function Register({ history }) {
         onSubmit={onSubmit}
       >
         {({ errors, touched, isSubmitting }) => (
-          <Form>
-            <div className="flex flex-1 flex-col justify-center lg:px-8 px-10 py-10 mt-5">
+          <Form className="md:mx-auto md:w-full md:max-w-md">
+            <div className="flex flex-1 flex-col justify-center lg:px-8 px-10 py-10 md:mt-5">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <h2 className="text-center text-3xl font-bold leading-9 tracking-tight text-gray-900">
                   Create a new account

@@ -41,8 +41,11 @@ function Login({ history }) {
   }, []);
 
   return (
-    <div className="login grid grid-cols-2 px-20" style={{ height: "87vh" }}>
-      <div className="flex justify-center items-center">
+    <div
+      className="login grid grid-cols-1 md:grid-cols-2 px-20 md:px-20 "
+      style={{ height: "87vh" }}
+    >
+      <div className="hidden md:flex justify-center items-center">
         <img
           ref={imageRef}
           src="bg_chesspanel.png"
@@ -58,14 +61,14 @@ function Login({ history }) {
       >
         {({ errors, touched, isSubmitting }) => (
           <Form>
-            <div className="flex flex-1 flex-col justify-center lg:px-8 px-10 py-10 mt-5">
+            <div className="flex flex-col justify-center px-5 py-5 mt-10">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <h2 className="text-center text-3xl font-bold leading-9 tracking-tight text-gray-900">
                   Sign in to your account
                 </h2>
               </div>
 
-              <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+              <div className="md:mt-10 mt-2 sm:mx-auto sm:w-full sm:max-w-sm">
                 <div className="space-y-6">
                   <div>
                     <label
@@ -102,7 +105,7 @@ function Login({ history }) {
                       <div className="text-sm">
                         <Link
                           to="/account/forgot-password"
-                          className="font-semibold text-indigo-600 hover:text-indigo-500"
+                          className="font-semibold text-indigo-600 hover:text-indigo-500 flex items-center"
                         >
                           Forgot Password?
                         </Link>
@@ -127,13 +130,12 @@ function Login({ history }) {
                     </div>
                   </div>
 
-                  <div className="flex">
+                  <div className="flex sm:flex-row sm:justify-between">
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-col w-full mt-2 mr-2 items-center justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className="flex-col w-full mr-2 items-center justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                      {" "}
                       {isSubmitting && (
                         <span className="inline-block animate-spin rounded-full border-t-2 border-white-900 mr-3 w-4 h-4"></span>
                       )}
@@ -141,7 +143,7 @@ function Login({ history }) {
                     </button>
                     <Link
                       to="/register"
-                      className="flex-col w-full mt-2 text-center justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className="flex-col w-full items-center justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Register
                     </Link>

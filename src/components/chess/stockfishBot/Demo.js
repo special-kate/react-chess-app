@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Chessboard from "chessboardjsx";
 import CustomDialog from "../../CustomDialog.js";
 
@@ -34,6 +34,7 @@ export default function Demo() {
                 value="Easy"
                 checked={level === "Easy"}
                 onChange={handleLevelChange}
+                className="mr-2"
               />
               Easy
             </label>
@@ -46,6 +47,7 @@ export default function Demo() {
                 value="Medium"
                 checked={level === "Medium"}
                 onChange={handleLevelChange}
+                className="mr-2"
               />
               Medium
             </label>
@@ -58,6 +60,7 @@ export default function Demo() {
                 value="Hard"
                 checked={level === "Hard"}
                 onChange={handleLevelChange}
+                className="mr-2"
               />
               Hard
             </label>

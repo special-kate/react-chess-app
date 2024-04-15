@@ -22,7 +22,9 @@ const Navbar = () => {
           }}
         >
           <i className="fas fa-sign-out-alt" />{" "}
-          <span className="hidden sm:inline">Logout</span>
+          <span className="text-black hover:text-gray-300 mr-4 px-2">
+            Logout
+          </span>
         </a>
       </li>
     </ul>
@@ -53,9 +55,12 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-20 flex justify-between items-center">
         <h1 className="text-black">
-          <Link to="/" className="text-black text-4xl font-bold">
+          <button
+            onClick={() => (window.location.href = "/")}
+            className="text-black text-4xl font-bold"
+          >
             <i className="fas fa-code" /> Chess
-          </Link>
+          </button>
         </h1>
         <div>{user ? authLinks : guestLinks}</div>
       </div>
