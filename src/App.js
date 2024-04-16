@@ -20,15 +20,13 @@ import { Alert } from "./components/Alert";
 import Multiplayer from "./components/chess/multiplayer/Multiplayer";
 import Demo from "./components/chess/stockfishBot/Demo";
 import { accountService } from "./_services";
+import Bot from "./components/chess/bot/Bot";
+import UserPlay from "./components/chess/user/UserPlay";
 
 function App() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
-    // redirect to home if already logged in
-    if (accountService.userValue) {
-      navigate("/");
-    }
     const subscription = accountService.user.subscribe((x) => setUser(x));
     return subscription.unsubscribe();
   }, []);
@@ -54,6 +52,8 @@ function App() {
           <Route path="/account/reset-password" element={<ResetPassword />} />
           <Route path="/multiplayer" element={<Multiplayer />} />
           <Route path="/stockfish" element={<Demo />} />
+          <Route path="/bot" element={<Bot />} />
+          <Route path="/user-play" element={<UserPlay />} />
         </Routes>
       </div>
     </Provider>

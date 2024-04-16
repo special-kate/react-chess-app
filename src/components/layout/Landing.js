@@ -17,12 +17,12 @@ function Landing() {
         height: "87vh",
       }}
     >
-      <div className="col-span-6 justify-center items-center hidden md:flex">
+      <div className="sm:hidden xl:flex md:justify-center md:items-center md:col-span-6">
         <img
           ref={imageRef}
           src="bg_chesspanel.png"
           alt="chesspanel"
-          className="rounded-lg p-9 ml-10"
+          className="landingImage rounded-lg p-9 ml-10"
           style={{ height: imageHeight, objectFit: "cover" }}
         />
       </div>
@@ -34,7 +34,7 @@ function Landing() {
           Play Online
         </Link>
         <Link
-          to="/stockfish"
+          onClick={() => (window.location.href = "/bot")}
           className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white shadow-md"
         >
           Challenge AI
