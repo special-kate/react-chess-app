@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { accountService } from "../../_services";
+import toastr from "toastr";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const subscription = accountService.user.subscribe((x) => setUser(x));
     console.log("nav", accountService.userValue);
+    console.log(window.location.pathname, accountService.userValue);
+    if (window.location.pathname !== "/" && !!user) {
+      toastr.error("Please sign in to play the game");
+      navigate("/");
+    }
     return subscription.unsubscribe();
   }, []);
 

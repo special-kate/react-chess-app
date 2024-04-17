@@ -4,6 +4,7 @@ import queryString from "query-string";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { accountService, alertService } from "../../_services";
+import toastr from "toastr";
 
 function ResetPassword({ history }) {
   const TokenStatus = {
@@ -36,14 +37,12 @@ function ResetPassword({ history }) {
       accountService
         .resetPassword({ token, password, confirmPassword })
         .then(() => {
-          alertService.success("Password reset successful, you can now login", {
-            keepAfterRouteChange: true,
-          });
+          toastr.success("Successfully reset your password.");
           navigate("/login");
         })
         .catch((error) => {
           setSubmitting(false);
-          alertService.error(error);
+          toastr.error(error);
         });
     }
 
@@ -52,7 +51,7 @@ function ResetPassword({ history }) {
         className="reset-password grid grid-cols-1 md:grid-cols-2 px-20"
         style={{ height: "87vh" }}
       >
-        <div className="hidden md:flex justify-center items-center">
+        <div className=" md:flex justify-center items-center">
           <img
             src={`${window.location.pathname.split("/")[0]}/bg_chesspanel.png`}
             alt="chesspanel"

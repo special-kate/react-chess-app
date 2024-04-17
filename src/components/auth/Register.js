@@ -3,12 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { accountService, alertService } from "../../_services";
+import toastr from "toastr";
 
 function Register({ history }) {
   const [imageHeight, setImageHeight] = useState(0);
   const imageRef = useRef(null);
   const navigate = useNavigate();
-
   const initialValues = {
     email: "",
     password: "",
@@ -28,18 +28,40 @@ function Register({ history }) {
   function onSubmit(fields, { setStatus, setSubmitting }) {
     setStatus();
     accountService
+      // .register(fields)
+      // .then(() => {
+      //   navigate("/login");
+      //   alertService.success(
+      //     "Registration successful, please check your email for verification instructions",
+      //     { keepAfterRouteChange: true }
+      //   );
+      //   setSubmitting(false);
+      // })
+      // .catch((error) => {
+      //   setSubmitting(false);
+      //   alertService.error(error);
+      // });
       .register(fields)
-      .then(() => {
-        navigate("/login");
-        alertService.success(
-          "Registration successful, please check your email for verification instructions",
-          { keepAfterRouteChange: true }
-        );
+      .then((res) => {
         setSubmitting(false);
+        if (res.already) {
+          toastr.error(res.msg);
+        } else {
+          accountService
+            .verifyEmail(res.msg.split("=")[1])
+            .then((res) => {
+              navigate("/login");
+              toastr.success("Successfully registered.");
+            })
+            .catch((err) => {
+              toastr.error("Email verification failed. Please try again.");
+              toastr.error(err);
+            });
+        }
       })
       .catch((error) => {
         setSubmitting(false);
-        alertService.error(error);
+        toastr.error("first step", error);
       });
   }
 
@@ -53,7 +75,7 @@ function Register({ history }) {
       className="register grid grid-cols-1 md:grid-cols-2 px-20"
       style={{ height: "87vh" }}
     >
-      <div className="hidden md:flex justify-center items-center">
+      <div className="md:flex justify-center items-center">
         <img
           ref={imageRef}
           src="bg_chesspanel.png"

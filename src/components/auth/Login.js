@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { accountService, alertService } from "../../_services";
+import toastr from "toastr";
 
 function Login({ history }) {
   const [imageHeight, setImageHeight] = useState(0);
@@ -28,7 +29,7 @@ function Login({ history }) {
       })
       .catch((error) => {
         setSubmitting(false);
-        alertService.error(error);
+        toastr.error(error);
       })
       .finally(() => {
         setSubmitting(false);
@@ -45,7 +46,7 @@ function Login({ history }) {
       className="login grid grid-cols-1 md:grid-cols-2 px-20 md:px-20 "
       style={{ height: "87vh" }}
     >
-      <div className="hidden md:flex justify-center items-center">
+      <div className="md:flex justify-center items-center">
         <img
           ref={imageRef}
           src="bg_chesspanel.png"

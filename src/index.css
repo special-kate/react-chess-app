@@ -1057,3 +1057,7 @@ div.chess_board div.chess_label_hidden {
 .board-b72b1 {
   border: none;
 }
+
+#toast-container {
+  top: 12vh !important;
+}

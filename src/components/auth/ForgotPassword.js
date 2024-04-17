@@ -20,11 +20,7 @@ function ForgotPassword({ history }) {
     alertService.clear();
     accountService
       .forgotPassword(email)
-      .then(() =>
-        alertService.success(
-          "Please check your email for password reset instructions"
-        )
-      )
+      .then((res) => (window.location.href = res))
       .catch((error) => alertService.error(error))
       .finally(() => setSubmitting(false));
   }
@@ -39,7 +35,7 @@ function ForgotPassword({ history }) {
       className="forgot-password grid grid-cols-1 md:grid-cols-2 px-20"
       style={{ height: "87vh" }}
     >
-      <div className="hidden md:flex justify-center items-center">
+      <div className=" md:flex justify-center items-center">
         <img
           ref={imageRef}
           src={`${window.location.pathname.split("/")[0]}/bg_chesspanel.png`}

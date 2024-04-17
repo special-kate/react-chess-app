@@ -84,11 +84,11 @@ async function revokeToken({ token, ipAddress }) {
 }
 
 async function register(params, origin) {
-  console.log("here ------------", params, origin);
   // validate
   if (await db.Account.findOne({ where: { email: params.email } })) {
     // send already registered error in email to prevent account enumeration
-    return await sendAlreadyRegisteredEmail(params.email, origin);
+    // return await sendAlreadyRegisteredEmail(params.email, origin);
+    return { already: true, msg: "Your email address is already registered." };
   }
 
   // create account object
@@ -105,11 +105,15 @@ async function register(params, origin) {
   // save account
   await account.save();
 
+  const verifyUrl = `${origin}/account/verify-email?token=${account.verificationToken}`;
+
+  return { already: false, msg: verifyUrl };
   // send email
-  await sendVerificationEmail(account, origin);
+  // await sendVerificationEmail(account, origin);
 }
 
 async function verifyEmail({ token }) {
+  console.log("token-----------------", token);
   const account = await db.Account.findOne({
     where: { verificationToken: token },
   });
@@ -132,8 +136,10 @@ async function forgotPassword({ email }, origin) {
   account.resetTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   await account.save();
 
+  const resetUrl = `${origin}/account/reset-password?token=${account.resetToken}`;
+  return resetUrl;
   // send email
-  await sendPasswordResetEmail(account, origin);
+  // await sendPasswordResetEmail(account, origin);
 }
 
 async function validateResetToken({ token }) {

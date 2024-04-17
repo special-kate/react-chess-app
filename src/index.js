@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router } from "react-router-dom";
 import { accountService } from "./_services";
+import "toastr/build/toastr.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 accountService.refreshToken().finally(startApp);
