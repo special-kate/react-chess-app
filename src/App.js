@@ -25,7 +25,6 @@ import UserPlay from "./components/chess/user/UserPlay";
 
 function App() {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
   useEffect(() => {
     const subscription = accountService.user.subscribe((x) => setUser(x));
     return subscription.unsubscribe();

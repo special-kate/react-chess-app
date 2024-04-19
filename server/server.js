@@ -51,19 +51,24 @@ io.on("connection", (socket) => {
     // check if room exists and has a player waiting
     const room = rooms.get(args.roomId);
     let error, message;
-
+    console.log(args);
     if (!room) {
       // if room does not exist
       error = true;
       message = "room does not exist";
-    } else if (room.length <= 0) {
+    } else if (room.players.length <= 0) {
       // if room is empty set appropriate message
       error = true;
       message = "room is empty";
-    } else if (room.length >= 2) {
+    } else if (room.players.length >= 2) {
       // if room is full
       error = true;
       message = "room is full"; // set message to 'room is full'
+    }
+    console.log(room);
+    if (room.players.findIndex((item) => item.username === args.user) > -1) {
+      error = true;
+      message = "Already joined.";
     }
 
     if (error) {
@@ -87,14 +92,11 @@ io.on("connection", (socket) => {
     // add the joining user's data to the list of players in the room
     const roomUpdate = {
       ...room,
-      players: [
-        ...room.players,
-        { id: socket.id, username: socket.data?.username },
-      ],
+      players: [...room.players, { id: socket.id, username: args.user }],
     };
 
     rooms.set(args.roomId, roomUpdate);
-
+    console.log("room, roomupdate", room, roomUpdate);
     callback(roomUpdate); // respond to the client with the room details.
 
     // emit an 'opponentJoined' event to the room to tell the other player that an opponent has joined

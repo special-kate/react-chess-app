@@ -28,7 +28,7 @@ function Landing() {
       </div>
       <div className="flex flex-col col-span-12 justify-center p-10 mr-5 md:col-span-6">
         <Link
-          to="/"
+          to="/multiplayer"
           className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white shadow-md"
         >
           Play Online

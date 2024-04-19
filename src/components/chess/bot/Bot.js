@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Bot = () => {
-  const [level, setLevel] = useState("7");
+  const [level, setLevel] = useState(10);
 
   const handleLevelChange = (event) => {
     console.log(level);
@@ -11,50 +11,31 @@ const Bot = () => {
 
   return (
     <div className="content">
-      <div className="chess-area">
-        <div className="board-table">
+      <div
+        className="chess-area flex grid-cols-3 items-center justify-center"
+        style={{ height: "87vh" }}
+      >
+        <div className="board-table col-span-2">
           <div id="board" className="board"></div>
         </div>
         <div>
-          <div className="board-settings pt-5 mt-5">
-            <div className="font-bold text-xl mb-4">Select AI level</div>
-            <div className="select-level">
+          <div className="board-settings col-span-1 pt-5 mt-5">
+            <div className="font-bold text-xl">Select AI level</div>
+            <div className="select-level my-5">
               <div>
-                <label>
-                  <input
-                    type="radio"
-                    value="7"
-                    checked={level === "7"}
-                    onChange={handleLevelChange}
-                    className="mr-2"
-                  />
-                  Easy
-                </label>
-              </div>
-              <br></br>
-              <div>
-                <label>
-                  <input
-                    type="radio"
-                    value="14"
-                    checked={level === "14"}
-                    onChange={handleLevelChange}
-                    className="mr-2"
-                  />
-                  Medium
-                </label>
-              </div>
-              <br></br>
-              <div>
-                <label>
-                  <input
-                    type="radio"
-                    value="20"
-                    checked={level === "20"}
-                    onChange={handleLevelChange}
-                    className="mr-2"
-                  />
-                  Hard
+                <input
+                  type="range"
+                  id="vol"
+                  name="vol"
+                  min="0"
+                  max="21"
+                  value={level}
+                  onChange={handleLevelChange}
+                  className="my-4"
+                />
+                <br></br>
+                <label for="vol">
+                  Current Level : {level * 5 > 100 ? "100" : level * 5}
                 </label>
               </div>
             </div>
@@ -67,7 +48,7 @@ const Bot = () => {
             <ol></ol>
           </div> */}
 
-            <div className="flex sm:flex-row sm:justify-between my-5">
+            <div className="flex sm:flex-row sm:justify-between m-5">
               <Link
                 // to="/bot"
                 onClick={() =>
@@ -85,7 +66,10 @@ const Bot = () => {
               </Link>
             </div>
 
-            <div id="board-controls" className="controls text-red-500">
+            <div
+              id="board-controls flex justify-content-center"
+              className="controls text-red-500"
+            >
               <div className="status">
                 <span id="game-state" className="hidden"></span>
               </div>

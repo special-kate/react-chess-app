@@ -20,7 +20,6 @@ var board, // chess board obj
   gameEnd = false; // flag for stall, checkmate, etc
 
 // Init engine
-console.log("hi-----", window.location.pathname);
 var stockfish = new Worker("js/stockfish.js");
 
 function dumpLog(data) {
@@ -109,7 +108,7 @@ stockfish.onmessage = function (event) {
 
   if (stateHint == "grep") {
     var match = eventStr.match(/^bestmove ([a-h][1-8])([a-h][1-8])([qrbk])?/);
-
+    console.log("match", match);
     if (match) {
       $("#board .square-" + match[1]).css("background", "#f7c5cd");
       $("#board .square-" + match[2]).css("background", "#f7c5cd");

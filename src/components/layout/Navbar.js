@@ -11,7 +11,7 @@ const Navbar = () => {
     const subscription = accountService.user.subscribe((x) => setUser(x));
     console.log("nav", accountService.userValue);
     console.log(window.location.pathname, accountService.userValue);
-    if (window.location.pathname !== "/" && !!user) {
+    if (window.location.pathname !== "/" && !accountService.userValue) {
       toastr.error("Please sign in to play the game");
       navigate("/");
     }
