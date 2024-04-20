@@ -1061,3 +1061,7 @@ div.chess_board div.chess_label_hidden {
 #toast-container {
   top: 12vh !important;
 }
+
+.board img {
+  padding: 5px;
+}

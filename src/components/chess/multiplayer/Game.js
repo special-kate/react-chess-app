@@ -5,11 +5,41 @@ import CustomDialog from "../../CustomDialog";
 import socket from "./socket";
 import $ from "jquery";
 
+import wP from "../img/pieces/wP.svg";
+import wK from "../img/pieces/wK.svg";
+import wN from "../img/pieces/wN.svg";
+import wB from "../img/pieces/wB.svg";
+import wR from "../img/pieces/wR.svg";
+import wQ from "../img/pieces/wQ.svg";
+
+import bP from "../img/pieces/bP.svg";
+import bK from "../img/pieces/bK.svg";
+import bN from "../img/pieces/bN.svg";
+import bB from "../img/pieces/bB.svg";
+import bR from "../img/pieces/bR.svg";
+import bQ from "../img/pieces/bQ.svg";
+
 function Game({ players, room, orientation, cleanup, user }) {
   const chess = useMemo(() => new Chess(), []);
   const [fen, setFen] = useState(chess.fen());
   const [over, setOver] = useState("");
   const [status, setStatus] = useState("");
+
+  const pieceTheme = {
+    wP: () => <img src={wP} alt="wp" />,
+    wK: () => <img src={wK} alt="wK" />,
+    wN: () => <img src={wN} alt="wN" />,
+    wB: () => <img src={wB} alt="wB" />,
+    wR: () => <img src={wR} alt="wR" />,
+    wQ: () => <img src={wQ} alt="wQ" />,
+
+    bP: () => <img src={bP} alt="bP" />,
+    bK: () => <img src={bK} alt="bK" />,
+    bN: () => <img src={bN} alt="bN" />,
+    bB: () => <img src={bB} alt="bB" />,
+    bR: () => <img src={bR} alt="bR" />,
+    bQ: () => <img src={bQ} alt="bQ" />,
+  };
 
   const makeAMove = useCallback(
     (move) => {
@@ -174,6 +204,7 @@ function Game({ players, room, orientation, cleanup, user }) {
             customLightSquareStyle={{ backgroundColor: "#E8EDF9" }}
             onMouseOverSquare={onMouseOver}
             onMouseOutSquare={onMouseOut}
+            customPieces={pieceTheme}
           />
         </div>
         <div className="col-span-1" style={{ margin: "1rem auto" }}>
