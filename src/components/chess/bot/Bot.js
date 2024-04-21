@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Bot = () => {
+const Bot = ({ darkMode }) => {
   const [level, setLevel] = useState(10);
 
   const handleLevelChange = (event) => {
@@ -20,8 +20,14 @@ const Bot = () => {
         </div>
         <div>
           <div className="board-settings col-span-1 pt-5 mt-5">
-            <div className="font-bold text-xl">Select AI level</div>
-            <div className="select-level my-5">
+            <div
+              className={`${
+                darkMode ? "text-white" : "text-black"
+              } font-bold text-xl mb-5`}
+            >
+              Select AI level
+            </div>
+            <div className="select-level">
               <div>
                 <input
                   type="range"
@@ -34,7 +40,10 @@ const Bot = () => {
                   className="my-4"
                 />
                 <br></br>
-                <label for="vol">
+                <label
+                  for="vol"
+                  className={`${darkMode ? "text-white" : "text-black"}`}
+                >
                   Current Level : {level * 5 > 100 ? "100" : level * 5}
                 </label>
               </div>

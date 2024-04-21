@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Switch,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
 import Login from "./components/auth/Login";
@@ -25,35 +19,121 @@ import UserPlay from "./components/chess/user/UserPlay";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedDarkMode = localStorage.getItem("darkMode");
+    return savedDarkMode ? JSON.parse(savedDarkMode) : false;
+  });
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
+  };
+
   useEffect(() => {
     const subscription = accountService.user.subscribe((x) => setUser(x));
-    return subscription.unsubscribe();
+    return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", darkMode);
+  }, [darkMode]);
 
   return (
     <Provider store={store}>
-      <div
-        className="overflow-hidden container bg-cover"
-        style={{
-          backgroundColor: "rgb(244, 247, 250)",
-          backgroundImage: "url('./bg4.png')",
-        }}
-      >
-        <Navbar />
-        <Alert />
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/*" element={<NotFound />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/account/verify-email" element={<VerifyEmail />} />
-          <Route path="/account/forgot-password" element={<ForgotPassword />} />
-          <Route path="/account/reset-password" element={<ResetPassword />} />
-          <Route path="/multiplayer" element={<Multiplayer />} />
-          <Route path="/stockfish" element={<Demo />} />
-          <Route path="/bot" element={<Bot />} />
-          <Route path="/user-play" element={<UserPlay />} />
-        </Routes>
+      <div className={darkMode ? "dark" : ""}>
+        <div
+          className="overflow-hidden container bg-cover"
+          style={{
+            backgroundColor: darkMode ? "rgb(0, 0, 0)" : "rgb(244, 247, 250)",
+            backgroundImage: darkMode
+              ? "url('./dark-bg.png')"
+              : "url('./light-bg.png')",
+          }}
+        >
+          <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+          <Alert />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Landing darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <Register darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <Login darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+              }
+            />
+            <Route
+              path="/account/verify-email"
+              element={
+                <VerifyEmail
+                  darkMode={darkMode}
+                  toggleDarkMode={toggleDarkMode}
+                />
+              }
+            />
+            <Route
+              path="/account/forgot-password"
+              element={
+                <ForgotPassword
+                  darkMode={darkMode}
+                  toggleDarkMode={toggleDarkMode}
+                />
+              }
+            />
+            <Route
+              path="/account/reset-password"
+              element={
+                <ResetPassword
+                  darkMode={darkMode}
+                  toggleDarkMode={toggleDarkMode}
+                />
+              }
+            />
+            <Route
+              path="/multiplayer"
+              element={
+                <Multiplayer
+                  darkMode={darkMode}
+                  toggleDarkMode={toggleDarkMode}
+                />
+              }
+            />
+            <Route
+              path="/stockfish"
+              element={
+                <Demo darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+              }
+            />
+            <Route
+              path="/bot"
+              element={
+                <Bot darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+              }
+            />
+            <Route
+              path="/user-play"
+              element={
+                <UserPlay darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <NotFound darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+              }
+            />
+          </Routes>
+        </div>
       </div>
     </Provider>
   );

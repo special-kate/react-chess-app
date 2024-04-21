@@ -4,7 +4,7 @@ import queryString from "query-string";
 
 import { accountService, alertService } from "../../_services";
 
-function VerifyEmail({ history }) {
+export function VerifyEmail({ history }) {
   const EmailStatus = {
     Verifying: "Verifying",
     Failed: "Failed",
@@ -12,19 +12,19 @@ function VerifyEmail({ history }) {
 
   const [emailStatus, setEmailStatus] = useState(EmailStatus.Verifying);
   const navigate = useNavigate();
+
   useEffect(() => {
     const { token } = queryString.parse(window.location.search);
 
-    // remove token from url to prevent http referer leakage
-
+    // Remove token from URL to prevent HTTP referer leakage
     navigate(window.location.pathname, { replace: true });
+
     accountService
       .verifyEmail(token)
       .then(() => {
         alertService.success("Verification successful, you can now login", {
           keepAfterRouteChange: true,
         });
-        // history.push("login");
         navigate("/login");
       })
       .catch(() => {
@@ -43,6 +43,8 @@ function VerifyEmail({ history }) {
             <Link to="forgot-password">forgot password</Link> page.
           </div>
         );
+      default:
+        return null;
     }
   }
 
@@ -54,4 +56,4 @@ function VerifyEmail({ history }) {
   );
 }
 
-export { VerifyEmail };
+export default VerifyEmail;

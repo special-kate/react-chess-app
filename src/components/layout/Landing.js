@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 
-function Landing() {
+function Landing({ darkMode }) {
   const [imageHeight, setImageHeight] = useState(0);
   const imageRef = useRef(null);
 
@@ -12,7 +12,9 @@ function Landing() {
 
   return (
     <div
-      className="landing grid bg-cover grid-cols-12 px-20"
+      className={`landing grid bg-cover grid-cols-12 px-20 ${
+        darkMode ? "text-white" : "text-black"
+      }`}
       style={{
         height: "87vh",
       }}
@@ -29,20 +31,40 @@ function Landing() {
       <div className="flex flex-col col-span-12 justify-center p-10 mr-5 md:col-span-6">
         <Link
           to="/multiplayer"
-          className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white shadow-md"
+          className={`${
+            darkMode
+              ? "shadow-blue-500 bg-black text-white border-gray-700"
+              : "border-gray-700 bg-white text-black"
+          } m-2 py-5 border flex items-center justify-center rounded-lg flex-1 shadow-md`}
         >
           Play Online
         </Link>
         <Link
           onClick={() => (window.location.href = "/bot")}
-          className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white shadow-md"
+          className={`${
+            darkMode
+              ? "shadow-blue-500 bg-black text-white border-gray-700"
+              : "border-gray-700 bg-white text-black"
+          } m-2 py-5 border flex items-center justify-center rounded-lg flex-1 shadow-md`}
         >
           Challenge AI
         </Link>
-        <Link className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white  shadow-md">
+        <Link
+          className={`${
+            darkMode
+              ? "shadow-blue-500 bg-black text-white border-gray-700"
+              : "border-gray-700 bg-white text-black"
+          } m-2 py-5 border flex items-center justify-center rounded-lg flex-1 shadow-md`}
+        >
           Tournaments
         </Link>
-        <Link className="m-2 py-5 border flex items-center justify-center border-gray-700 rounded-lg flex-1 bg-white shadow-md">
+        <Link
+          className={`${
+            darkMode
+              ? "shadow-blue-500 bg-black text-white border-gray-700"
+              : "border-gray-700 bg-white text-black"
+          } m-2 py-5 border flex items-center justify-center rounded-lg flex-1 shadow-md`}
+        >
           Chess Ranking
         </Link>
       </div>

@@ -19,7 +19,7 @@ import bB from "../img/pieces/bB.svg";
 import bR from "../img/pieces/bR.svg";
 import bQ from "../img/pieces/bQ.svg";
 
-function Game({ players, room, orientation, cleanup, user }) {
+function Game({ players, room, orientation, cleanup, user, darkMode }) {
   const chess = useMemo(() => new Chess(), []);
   const [fen, setFen] = useState(chess.fen());
   const [over, setOver] = useState("");
@@ -208,12 +208,18 @@ function Game({ players, room, orientation, cleanup, user }) {
           />
         </div>
         <div className="col-span-1" style={{ margin: "1rem auto" }}>
-          <p className="bg-white shadow-md p-4">
+          <p
+            className={`${
+              darkMode
+                ? "bg-black text-white shadow-blue-500"
+                : "bg-white text-black"
+            } shadow-md p-4`}
+          >
             <span className="font-bold">Room ID: </span>
             {room}
           </p>
           {players.length > 1 && (
-            <>
+            <div className={`${darkMode ? "text-white" : "text-black"}`}>
               <div className="p-5 font-bold flex justify-center">Players</div>
               <ul className="px-5  list-inside">
                 <li className="flex justify-center mb-2">
@@ -223,7 +229,7 @@ function Game({ players, room, orientation, cleanup, user }) {
                   {players[1].username === user ? "You" : players[1].username}
                 </li>
               </ul>
-            </>
+            </div>
           )}
           <div className="flex justify-between">
             <div className="status my-7 ml-2 text-red-500">{status}</div>

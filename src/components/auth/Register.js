@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { accountService, alertService } from "../../_services";
 import toastr from "toastr";
 
-function Register({ history }) {
+function Register({ darkMode }) {
   const [imageHeight, setImageHeight] = useState(0);
   const imageRef = useRef(null);
   const navigate = useNavigate();
@@ -28,19 +28,6 @@ function Register({ history }) {
   function onSubmit(fields, { setStatus, setSubmitting }) {
     setStatus();
     accountService
-      // .register(fields)
-      // .then(() => {
-      //   navigate("/login");
-      //   alertService.success(
-      //     "Registration successful, please check your email for verification instructions",
-      //     { keepAfterRouteChange: true }
-      //   );
-      //   setSubmitting(false);
-      // })
-      // .catch((error) => {
-      //   setSubmitting(false);
-      //   alertService.error(error);
-      // });
       .register(fields)
       .then((res) => {
         setSubmitting(false);
@@ -49,7 +36,7 @@ function Register({ history }) {
         } else {
           accountService
             .verifyEmail(res.msg.split("=")[1])
-            .then((res) => {
+            .then(() => {
               navigate("/login");
               toastr.success("Successfully registered.");
             })
@@ -93,7 +80,11 @@ function Register({ history }) {
           <Form className="md:mx-auto md:w-full md:max-w-md">
             <div className="flex flex-1 flex-col justify-center lg:px-8 px-10 py-10 md:mt-5">
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <h2 className="text-center text-3xl font-bold leading-9 tracking-tight text-gray-900">
+                <h2
+                  className={`${
+                    darkMode ? "text-white" : "text-gray-900"
+                  } text-center text-3xl font-bold leading-9 tracking-tight `}
+                >
                   Create a new account
                 </h2>
               </div>
@@ -103,7 +94,9 @@ function Register({ history }) {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium leading-6 text-gray-900"
+                      className={`block text-sm font-medium leading-6 ${
+                        darkMode ? "text-white" : "text-gray-900"
+                      }`}
                     >
                       Email address
                     </label>
@@ -128,7 +121,9 @@ function Register({ history }) {
                     <div className="flex items-center justify-between">
                       <label
                         htmlFor="password"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className={`block text-sm font-medium leading-6 ${
+                          darkMode ? "text-white" : "text-gray-900"
+                        }`}
                       >
                         Password
                       </label>
@@ -156,7 +151,9 @@ function Register({ history }) {
                     <div className="flex items-center justify-between">
                       <label
                         htmlFor="password"
-                        className="block text-sm font-medium leading-6 text-gray-900"
+                        className={`block text-sm font-medium leading-6 ${
+                          darkMode ? "text-white" : "text-gray-900"
+                        }`}
                       >
                         Confirm Password
                       </label>
@@ -184,7 +181,9 @@ function Register({ history }) {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-col w-full mr-2 items-center justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className={`flex-col w-full mr-2 items-center justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
+                        isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                     >
                       {isSubmitting && (
                         <span className="inline-block animate-spin rounded-full border-t-2 border-white-900 mr-3 w-4 h-4"></span>
@@ -193,7 +192,9 @@ function Register({ history }) {
                     </button>
                     <Link
                       to="/login"
-                      className="flex-col w-full text-center justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className={`flex-col w-full text-center justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
+                        isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                     >
                       Cancel
                     </Link>
