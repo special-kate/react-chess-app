@@ -33,6 +33,16 @@ io.on("connection", (socket) => {
 
   socket.on("createRoom", async (callback) => {
     // callback here refers to the callback function from the client passed as data
+
+    const room = Array.from(rooms.values()).find((item) =>
+      item.players.some((each) => each.username === socket.data?.username)
+    );
+
+    if (room) {
+      console.log(rooms, room);
+      return;
+    }
+
     const roomId = uuidV4(); // <- 1 create a new uuid
     await socket.join(roomId); // <- 2 make creating user join the room
 
@@ -43,32 +53,26 @@ io.on("connection", (socket) => {
       players: [{ id: socket.id, username: socket.data?.username }],
     });
     // returns Map(1){'2b5b51a9-707b-42d6-9da8-dc19f863c0d0' => [{id: 'socketid', username: 'username1'}]}
+    console.log(socket.data?.username, "created room ---", roomId);
 
     callback(roomId); // <- 4 respond with roomId to client by calling the callback function from the client
   });
 
   socket.on("joinRoom", async (args, callback) => {
     // check if room exists and has a player waiting
-    const room = rooms.get(args.roomId);
+    console.log("join emits");
+
+    const room = Array.from(rooms.values()).find(
+      (item) => item.players && item.players.length === 1
+    );
+
     let error, message;
-    console.log(args);
+
     if (!room) {
       // if room does not exist
+      console.log("empty", rooms);
       error = true;
       message = "room does not exist";
-    } else if (room.players.length <= 0) {
-      // if room is empty set appropriate message
-      error = true;
-      message = "room is empty";
-    } else if (room.players.length >= 2) {
-      // if room is full
-      error = true;
-      message = "room is full"; // set message to 'room is full'
-    }
-    console.log(room);
-    if (room.players.findIndex((item) => item.username === args.user) > -1) {
-      error = true;
-      message = "Already joined.";
     }
 
     if (error) {
@@ -87,7 +91,9 @@ io.on("connection", (socket) => {
       return; // exit
     }
 
-    await socket.join(args.roomId); // make the joining client join the room
+    console.log("room here", room.players);
+
+    await socket.join(room.roomId); // make the joining client join the room
 
     // add the joining user's data to the list of players in the room
     const roomUpdate = {
@@ -95,12 +101,12 @@ io.on("connection", (socket) => {
       players: [...room.players, { id: socket.id, username: args.user }],
     };
 
-    rooms.set(args.roomId, roomUpdate);
+    rooms.set(room.roomId, roomUpdate);
     console.log("room, roomupdate", room, roomUpdate);
     callback(roomUpdate); // respond to the client with the room details.
 
     // emit an 'opponentJoined' event to the room to tell the other player that an opponent has joined
-    socket.to(args.roomId).emit("opponentJoined", roomUpdate);
+    socket.to(room.roomId).emit("opponentJoined", roomUpdate);
   });
 
   socket.on("move", (data) => {
@@ -132,9 +138,30 @@ io.on("connection", (socket) => {
 
     const clientSockets = await io.in(data.roomId).fetchSockets(); // <- 2 get all sockets in a room
 
+    const gameRooms = Array.from(rooms.values()); // <- 1
+
     // loop over each socket client
     clientSockets.forEach((s) => {
-      s.leave(data.roomId); // <- 3 and make them leave the room on socket.io
+      {
+        gameRooms.forEach((room) => {
+          // <- 2
+          const userInRoom = room.players.find(
+            (player) => player.id === socket.id
+          ); // <- 3
+
+          if (userInRoom) {
+            if (room.players.length < 2) {
+              // if there's only 1 player in the room, close it and exit.
+              rooms.delete(room.roomId);
+              return;
+            }
+            console.log("disconnecting");
+            socket.to(room.roomId).emit("playerDisconnected", userInRoom); // <- 4
+          }
+        });
+
+        s.leave(data.roomId);
+      } // <- 3 and make them leave the room on socket.io
     });
 
     rooms.delete(data.roomId); // <- 4 delete room from rooms map

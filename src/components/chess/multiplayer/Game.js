@@ -61,7 +61,6 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
 
         return result;
       } catch (e) {
-        console.log(e);
         return null;
       }
     },
@@ -89,7 +88,6 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
       room,
     });
 
-    console.log("hi-----------", players, user);
     setStatus(
       `${players.find((item) => item.username !== user).username}'s turn`
     );
@@ -119,8 +117,6 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
       verbose: true,
     });
 
-    console.log("------------over", square, getAllAvailablePaths(square));
-
     // highlight the square they moused over
     greySquare(square);
 
@@ -140,7 +136,6 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
 
   var removeGreySquares = function () {
     var squareElements = $("[data-square]").toArray();
-    console.log(squareElements[0]);
     squareElements.forEach((element) => {
       var $element = $(element); // Wrap the DOM element in a jQuery object
       if ($element.attr("data-square-color") === "black") {
@@ -172,6 +167,7 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
   useEffect(() => {
     socket.on("closeRoom", ({ roomId }) => {
       if (roomId === room) {
+        console.log("over", over);
         cleanup();
       }
     });
@@ -179,12 +175,11 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
 
   useEffect(() => {
     setStatus(
-      players.length === 0
+      players.length < 2
         ? "Waiting for opponant..."
         : "Start a game with white player."
     );
   }, [players]);
-  console.log(players);
   return (
     <div className="flex flex-col grid-cols-3 items-center">
       <div className="flex col-span-2 justify-between w-full max-w-screen-lg">
@@ -208,7 +203,7 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
           />
         </div>
         <div className="col-span-1" style={{ margin: "1rem auto" }}>
-          <p
+          {/* <p
             className={`${
               darkMode
                 ? "bg-black text-white shadow-blue-500"
@@ -217,7 +212,7 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
           >
             <span className="font-bold">Room ID: </span>
             {room}
-          </p>
+          </p> */}
           {players.length > 1 && (
             <div className={`${darkMode ? "text-white" : "text-black"}`}>
               <div className="p-5 font-bold flex justify-center">Players</div>
@@ -231,14 +226,20 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
               </ul>
             </div>
           )}
-          <div className="flex justify-between">
+          <div className="col-span-1 justify-center">
             <div className="status my-7 ml-2 text-red-500">{status}</div>
-            <button
-              className="my-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => window.location.reload()}
-            >
-              Cancel
-            </button>
+            <div className="grid place-items-center">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => {
+                  socket.emit("closeRoom", { roomId: room });
+                  cleanup();
+                  window.location.href = "/";
+                }}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -248,7 +249,8 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
         contentText={over}
         handleContinue={() => {
           socket.emit("closeRoom", { roomId: room });
-          cleanup();
+          window.location.href = "/";
+          console.log("dialgo", over);
         }}
       />
     </div>

@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Bot = ({ darkMode }) => {
-  const [level, setLevel] = useState(10);
+  const [level, setLevel] = useState(() => {
+    // Retrieve level from local storage or set default value
+    return parseInt(localStorage.getItem("level")) || 10;
+  });
+
+  // Update local storage whenever the level changes
+  useEffect(() => {
+    localStorage.setItem("level", level);
+  }, [level]);
 
   const handleLevelChange = (event) => {
-    console.log(level);
-    setLevel(event.target.value);
+    setLevel(parseInt(event.target.value));
   };
 
   return (
@@ -41,7 +48,7 @@ const Bot = ({ darkMode }) => {
                 />
                 <br></br>
                 <label
-                  for="vol"
+                  htmlFor="vol"
                   className={`${darkMode ? "text-white" : "text-black"}`}
                 >
                   Current Level : {level * 5 > 100 ? "100" : level * 5}
@@ -53,13 +60,8 @@ const Bot = ({ darkMode }) => {
               {level}
             </div>
 
-            {/* <div className="turns-history" id="game-turns-history">
-            <ol></ol>
-          </div> */}
-
             <div className="flex sm:flex-row sm:justify-between m-5">
               <Link
-                // to="/bot"
                 onClick={() =>
                   (window.location.href = window.location.pathname)
                 }

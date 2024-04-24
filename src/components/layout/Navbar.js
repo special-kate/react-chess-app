@@ -12,12 +12,19 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
   useEffect(() => {
     const subscription = accountService.user.subscribe((x) => setUser(x));
 
-    if (window.location.pathname !== "/" && !accountService.userValue) {
+    // Check if the user is authenticated
+    if (
+      (window.location.pathname === "/bot" ||
+        window.location.pathname === "/multiplayer") &&
+      !accountService.userValue
+    ) {
       toastr.error("Please sign in to play the game");
       navigate("/");
+      return; // Exit early if user is not authenticated
     }
+
     return subscription.unsubscribe();
-  }, []);
+  }, [window.location.pathname]);
 
   const authLinks = (
     <ul
