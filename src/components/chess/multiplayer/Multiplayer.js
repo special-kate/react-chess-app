@@ -1,64 +1,85 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Game from "./Game";
-import socket from "./socket";
-import { accountService } from "../../../_services";
+import { accountService } from "../../../_services/account.service";
+
+import CustomDialog from "../../CustomDialog";
 
 export default function Multiplayer({ darkMode }) {
-  const [username, setUsername] = useState("");
-  const [room, setRoom] = useState("");
-  const [orientation, setOrientation] = useState("");
-  const [players, setPlayers] = useState([]);
+  const [level, setLevel] = useState(null);
+  const [levelSubmitted, setLevelSubmitted] = useState(false);
+  const [start, setStart] = useState(false);
 
-  // resets the states responsible for initializing a game
-  const cleanup = useCallback(() => {
-    setRoom("");
-    setOrientation("");
-    setPlayers("");
-  }, []);
-
-  useEffect(() => {
-    if (!accountService.userValue) {
-      return;
-    } else {
-      setUsername(accountService.userValue.email.split("@")[0]);
-      socket.emit("username", accountService.userValue.email.split("@")[0]);
-
-      socket.emit(
-        "joinRoom",
-        { user: accountService.userValue.email.split("@")[0] },
-        (r) => {
-          if (r.error) {
-            socket.emit("createRoom", (r) => {
-              setRoom(r);
-              setOrientation("white");
-            });
-          } else {
-            setRoom(r?.roomId);
-            setPlayers(r?.players);
-            setOrientation("black");
-          }
-        }
-      );
-
-      // Listen for opponentJoined event
-      socket.on("opponentJoined", (roomData) => {
-        setPlayers(roomData.players);
-      });
-    }
-  }, []);
+  const handleLevelChange = (event) => {
+    setLevel(parseInt(event.target.value));
+  };
 
   return (
     <div className="container mx-auto">
-      <Game
-        room={room}
-        orientation={orientation}
-        username={username}
-        players={players}
-        // the cleanup function will be used by Game to reset the state when a game is over
-        cleanup={cleanup}
-        user={username}
-        darkMode={darkMode}
-      />
+      <CustomDialog
+        open={!levelSubmitted}
+        handleClose={() => setLevelSubmitted(true)}
+        title="Select time to play"
+        contentText=""
+        handleContinue={() => {
+          if (!level) return;
+          setStart(true);
+          setLevelSubmitted(true);
+        }}
+      >
+        <div>
+          <div>
+            <label>
+              <input
+                type="radio"
+                value={1}
+                checked={level === 1}
+                onChange={handleLevelChange}
+                className="mr-2"
+              />
+              1 min
+            </label>
+          </div>
+          <br></br>
+          <div>
+            <label>
+              <input
+                type="radio"
+                value={3}
+                checked={level === 3}
+                onChange={handleLevelChange}
+                className="mr-2"
+              />
+              3 min
+            </label>
+          </div>
+          <br></br>
+          <div>
+            <label>
+              <input
+                type="radio"
+                value={5}
+                checked={level === 5}
+                onChange={handleLevelChange}
+                className="mr-2"
+              />
+              5 min
+            </label>
+          </div>
+        </div>
+      </CustomDialog>
+      {start && (
+        <Game
+          // room={room}
+          // orientation={orientation}
+          // username={username}
+          // players={players}
+          // // the cleanup function will be used by Game to reset the state when a game is over
+          // cleanup={cleanup}
+          // user={username}
+          darkMode={darkMode}
+          level={level}
+        />
+      )}
     </div>
   );
 }

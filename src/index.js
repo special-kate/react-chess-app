@@ -12,11 +12,11 @@ accountService.refreshToken().finally(startApp);
 
 function startApp() {
   root.render(
-    <React.StrictMode>
-      <Router>
-        <App />
-      </Router>
-    </React.StrictMode>
+    // <React.StrictMode>
+    <Router>
+      <App />
+    </Router>
+    // </React.StrictMode>
   );
 }
 

@@ -2,8 +2,9 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 import CustomDialog from "../../CustomDialog";
-import socket from "./socket";
 import $ from "jquery";
+import socket from "./socket";
+import { accountService } from "../../../_services";
 
 import wP from "../img/pieces/wP.svg";
 import wK from "../img/pieces/wK.svg";
@@ -19,11 +20,18 @@ import bB from "../img/pieces/bB.svg";
 import bR from "../img/pieces/bR.svg";
 import bQ from "../img/pieces/bQ.svg";
 
-function Game({ players, room, orientation, cleanup, user, darkMode }) {
+function Game({ darkMode, level }) {
   const chess = useMemo(() => new Chess(), []);
   const [fen, setFen] = useState(chess.fen());
   const [over, setOver] = useState("");
   const [status, setStatus] = useState("");
+
+  const [username, setUsername] = useState("");
+  const [room, setRoom] = useState("");
+  const [orientation, setOrientation] = useState("");
+  const [players, setPlayers] = useState([]);
+  const [timer, setTimer] = useState(level * 60);
+  const [moveTimer, setMoveTimer] = useState(15);
 
   const pieceTheme = {
     wP: () => <img src={wP} alt="wp" />,
@@ -46,7 +54,6 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
       try {
         const result = chess.move(move);
         setFen(chess.fen());
-
         if (chess.isGameOver()) {
           if (chess.isCheckmate()) {
             setOver(
@@ -82,14 +89,13 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
     const move = makeAMove(moveData);
 
     if (move === null) return false;
-
     socket.emit("move", {
       move,
       room,
     });
 
     setStatus(
-      `${players.find((item) => item.username !== user).username}'s turn`
+      `${players.find((item) => item.username !== username).username}'s turn`
     );
 
     return true;
@@ -151,27 +157,103 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
     squareEl.css("background-color", background);
   };
 
+  const startTimer = (roomValue) => {
+    const intervalId = setInterval(() => {
+      setTimer((prevTimer) => {
+        const newTimer = prevTimer > 0 ? prevTimer - 1 : 0;
+        socket.emit("updateTimer", { timer: newTimer, room: roomValue });
+        return newTimer;
+      });
+    }, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  };
+
+  const startMoveTimer = () => {
+    const moveIntervalId = setInterval(() => {
+      setMoveTimer((prevMoveTimer) => {
+        const newMoveTimer = prevMoveTimer > 0 ? prevMoveTimer - 1 : 0;
+        return newMoveTimer;
+      });
+    }, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(moveIntervalId);
+  };
+
+  // resets the states responsible for initializing a game
+  const cleanup = useCallback(() => {
+    setRoom("");
+    setOrientation("");
+    setPlayers("");
+  }, []);
+
   useEffect(() => {
     socket.on("playerDisconnected", (player) => {
       setOver(`${player.username} has disconnected`);
     });
+
+    socket.on("updateTimer", (newTimer) => {
+      setTimer(newTimer);
+    });
+
+    socket.on("closeRoom", ({ roomId }) => {
+      if (roomId === room) {
+        cleanup();
+      }
+    });
+
+    if (!accountService.userValue && !level) {
+      return;
+    } else {
+      setUsername(accountService.userValue.email.split("@")[0]);
+      socket.emit("username", accountService.userValue.email.split("@")[0]);
+
+      socket.emit(
+        "joinRoom",
+        { username: accountService.userValue.email.split("@")[0], time: level },
+        (r) => {
+          if (r.error) {
+            socket.emit(
+              "createRoom",
+              {
+                username: accountService.userValue.email.split("@")[0],
+                time: level,
+              },
+              (r) => {
+                setRoom(r);
+                setOrientation("white");
+              }
+            );
+          } else {
+            setRoom(r?.roomId);
+            setPlayers(r?.players);
+            setOrientation("black");
+          }
+        }
+      );
+
+      // Listen for opponentJoined event
+      socket.on("opponentJoined", (roomData) => {
+        setPlayers(roomData.players);
+      });
+
+      socket.on("moveTimeDue", (user) => {
+        setOver(`You win this game with ${user}'s no response within 15s.`);
+        cleanup();
+      });
+    }
   }, []);
 
   useEffect(() => {
     socket.on("move", (move) => {
       makeAMove(move);
+      setMoveTimer(15);
+      startMoveTimer();
       setStatus("It's your turn");
     });
   }, [makeAMove]);
-
-  useEffect(() => {
-    socket.on("closeRoom", ({ roomId }) => {
-      if (roomId === room) {
-        console.log("over", over);
-        cleanup();
-      }
-    });
-  }, [room, cleanup]);
 
   useEffect(() => {
     setStatus(
@@ -180,6 +262,22 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
         : "Start a game with white player."
     );
   }, [players]);
+
+  useEffect(() => {
+    if (timer === 0) {
+      setOver("Time is due. This game ends in a draw.");
+      cleanup();
+    }
+
+    if (moveTimer === 0) {
+      socket.emit("moveTimeDue", { username: username, room: room });
+      setOver(
+        `Time is due. You have lost this game with no reaction within 15s.`
+      );
+      cleanup();
+    }
+  }, [timer, moveTimer]);
+
   return (
     <div className="flex flex-col grid-cols-3 items-center">
       <div className="flex col-span-2 justify-between w-full max-w-screen-lg">
@@ -203,25 +301,29 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
           />
         </div>
         <div className="col-span-1" style={{ margin: "1rem auto" }}>
-          {/* <p
+          <p
             className={`${
               darkMode
                 ? "bg-black text-white shadow-blue-500"
                 : "bg-white text-black"
             } shadow-md p-4`}
           >
-            <span className="font-bold">Room ID: </span>
-            {room}
-          </p> */}
+            <span className="font-bold">Time left: </span>
+            {`${Math.floor(timer / 60)} : ${timer % 60}`}
+          </p>
           {players.length > 1 && (
             <div className={`${darkMode ? "text-white" : "text-black"}`}>
               <div className="p-5 font-bold flex justify-center">Players</div>
               <ul className="px-5  list-inside">
                 <li className="flex justify-center mb-2">
-                  {players[0].username === user ? "You" : players[0].username}
+                  {players[0].username === username
+                    ? "You"
+                    : players[0].username}
                 </li>
                 <li className="flex justify-center mb-2">
-                  {players[1].username === user ? "You" : players[1].username}
+                  {players[1].username === username
+                    ? "You"
+                    : players[1].username}
                 </li>
               </ul>
             </div>
@@ -250,7 +352,6 @@ function Game({ players, room, orientation, cleanup, user, darkMode }) {
         handleContinue={() => {
           socket.emit("closeRoom", { roomId: room });
           window.location.href = "/";
-          console.log("dialgo", over);
         }}
       />
     </div>

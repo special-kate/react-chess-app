@@ -31,15 +31,15 @@ io.on("connection", (socket) => {
     socket.data.username = username;
   });
 
-  socket.on("createRoom", async (callback) => {
+  socket.on("createRoom", async (args, callback) => {
     // callback here refers to the callback function from the client passed as data
 
     const room = Array.from(rooms.values()).find((item) =>
-      item.players.some((each) => each.username === socket.data?.username)
+      item.players.some((each) => each.username === args.username)
     );
 
-    if (room) {
-      console.log(rooms, room);
+    if (room && room.time === args.time) {
+      console.log("already-------------", rooms, room, args.username);
       return;
     }
 
@@ -50,10 +50,11 @@ io.on("connection", (socket) => {
     rooms.set(roomId, {
       // <- 3
       roomId,
-      players: [{ id: socket.id, username: socket.data?.username }],
+      time: args.time,
+      players: [{ id: socket.id, username: args.username }],
     });
     // returns Map(1){'2b5b51a9-707b-42d6-9da8-dc19f863c0d0' => [{id: 'socketid', username: 'username1'}]}
-    console.log(socket.data?.username, "created room ---", roomId);
+    console.log(args.username, "created room ---", roomId);
 
     callback(roomId); // <- 4 respond with roomId to client by calling the callback function from the client
   });
@@ -63,7 +64,8 @@ io.on("connection", (socket) => {
     console.log("join emits");
 
     const room = Array.from(rooms.values()).find(
-      (item) => item.players && item.players.length === 1
+      (item) =>
+        item.players && item.players.length === 1 && item.time === args.time
     );
 
     let error, message;
@@ -98,7 +100,7 @@ io.on("connection", (socket) => {
     // add the joining user's data to the list of players in the room
     const roomUpdate = {
       ...room,
-      players: [...room.players, { id: socket.id, username: args.user }],
+      players: [...room.players, { id: socket.id, username: args.username }],
     };
 
     rooms.set(room.roomId, roomUpdate);
@@ -110,6 +112,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("move", (data) => {
+    console.log("move", data, socket.id);
     // emit to all sockets in the room except the emitting socket.
     socket.to(data.room).emit("move", data.move);
   });
@@ -133,6 +136,16 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("updateTimer", async (data) => {
+    console.log("updatetimer", data);
+    socket.to(data.room).emit("updateTimer", data.timer);
+  });
+
+  socket.on("moveTimeDue", async (data) => {
+    console.log("moveTimeDue", data);
+    socket.to(data.room).emit("moveTimeDue", data.username);
+  });
+
   socket.on("closeRoom", async (data) => {
     socket.to(data.roomId).emit("closeRoom", data); // <- 1 inform others in the room that the room is closing
 
@@ -142,26 +155,25 @@ io.on("connection", (socket) => {
 
     // loop over each socket client
     clientSockets.forEach((s) => {
-      {
-        gameRooms.forEach((room) => {
-          // <- 2
-          const userInRoom = room.players.find(
-            (player) => player.id === socket.id
-          ); // <- 3
+      gameRooms.forEach((room) => {
+        // <- 2
+        const userInRoom = room.players.find(
+          (player) => player.id === socket.id
+        ); // <- 3
 
-          if (userInRoom) {
-            if (room.players.length < 2) {
-              // if there's only 1 player in the room, close it and exit.
-              rooms.delete(room.roomId);
-              return;
-            }
-            console.log("disconnecting");
-            socket.to(room.roomId).emit("playerDisconnected", userInRoom); // <- 4
+        if (userInRoom) {
+          if (room.players.length < 2) {
+            // if there's only 1 player in the room, close it and exit.
+            rooms.delete(room.roomId);
+            return;
           }
-        });
+          console.log("disconnecting");
+          socket.to(room.roomId).emit("playerDisconnected", userInRoom); // <- 4
+        }
+      });
 
-        s.leave(data.roomId);
-      } // <- 3 and make them leave the room on socket.io
+      s.leave(data.roomId);
+      // <- 3 and make them leave the room on socket.io
     });
 
     rooms.delete(data.roomId); // <- 4 delete room from rooms map
